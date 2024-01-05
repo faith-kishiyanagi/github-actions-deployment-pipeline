@@ -12,6 +12,9 @@ permissions:
 jobs:
   changes:
     runs-on: ubuntu-latest
+    outputs:
+      web_src: ${{ steps.changes.outputs.web_src }}
+      api_src: ${{ steps.changes.outputs.api_src }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
