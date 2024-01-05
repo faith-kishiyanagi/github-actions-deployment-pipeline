@@ -23,7 +23,7 @@ jobs:
         id: changes
         uses: dorny/paths-filter@v2
         with:
-          base: main
+          base: ${{ github.ref }}
           filters: |
             web_src:
               - 'src/web/**'
