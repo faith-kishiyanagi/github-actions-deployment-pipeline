@@ -14,8 +14,8 @@ jobs:
   changes:
     runs-on: ubuntu-latest
     outputs:
-      web_src: ${{ steps.changes.outputs.web_src }}
-      api_src: ${{ steps.changes.outputs.api_src }}
+      frontend: ${{ steps.changes.outputs.frontend }}
+      backend: ${{ steps.changes.outputs.backend }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -26,31 +26,31 @@ jobs:
         with:
           base: ${{ github.ref }}
           filters: |
-            web_src:
+            frontend:
               - 'src/web/**'
-            api_src:
+            backend:
               - 'src/api/**'
 
   # バックエンドをデプロイする場合
-  dbmigrate:
+  backend-db-migrate:
     needs: [changes]
-    if: ${{ needs.changes.outputs.api_src == 'true' && needs.changes.outputs.web_src == 'true' }}
+    if: ${{ needs.changes.outputs.backend == 'true' && needs.changes.outputs.frontend == 'true' }}
     uses: ./.github/workflows/api-db-migrate.yml
-
-  sidekiq:
-    needs: [dbmigrate]
+  backend-sidekiq:
+    needs: [backend-db-migrate]
     uses: ./.github/workflows/api-deploy.yml
-
-  api:
-    needs: [dbmigrate]
+  backend-cron-job:
+      needs: [backend-db-migrate]
+      uses: ./.github/workflows/api-deploy.yml
+  backend-api:
+    needs: [backend-db-migrate]
     uses: ./.github/workflows/api-deploy.yml
-
-  web:
-    needs: [api]
+  frontend-web:
+    needs: [backend-api]
     uses: ./.github/workflows/web-deploy.yml 
 
   # フロントだけデプロイする場合
-  web_only:
+  frontend-web-only:
     needs: [changes]
-    if: ${{ needs.changes.outputs.api_src == 'false' && needs.changes.outputs.web_src == 'true' }}
+    if: ${{ needs.changes.outputs.backend == 'false' && needs.changes.outputs.frontend == 'true' }}
     uses: ./.github/workflows/web-deploy.yml
