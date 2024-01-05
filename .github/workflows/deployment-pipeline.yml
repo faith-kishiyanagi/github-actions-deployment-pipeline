@@ -50,6 +50,6 @@ jobs:
 
   # フロントだけデプロイする場合
   web_only:
-    if: ${{ needs.changes.outputs.api_src == 'false' && needs.changes.outputs.web_src == 'true' }}
     needs: [changes]
+    if: ${{ needs.changes.outputs.api_src == 'false' && needs.changes.outputs.web_src == 'true' }}
     uses: ./.github/workflows/web-deploy.yml
