@@ -40,8 +40,8 @@ jobs:
     needs: [backend-db-migrate]
     uses: ./.github/workflows/api-deploy.yml
   backend-cron-job:
-      needs: [backend-db-migrate]
-      uses: ./.github/workflows/api-deploy.yml
+    needs: [backend-db-migrate]
+    uses: ./.github/workflows/api-deploy.yml
   backend-api:
     needs: [backend-db-migrate]
     uses: ./.github/workflows/api-deploy.yml
